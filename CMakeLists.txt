@@ -4,10 +4,12 @@ project(xue)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(xue_alloc STATIC
-    src/StackAllocator.cpp
-    src/StackAllocator.h
     src/ArenaAllocator.cpp
     src/ArenaAllocator.h
+    src/StackAllocator.cpp
+    src/StackAllocator.h
+    src/DoubleStackAllocator.cpp
+    src/DoubleStackAllocator.h
 )
 
 Include(FetchContent)

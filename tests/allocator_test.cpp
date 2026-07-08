@@ -127,7 +127,7 @@ TEST_CASE("frees all memory", "[ArenaAllocator]") {
     auto alloc = ArenaAllocator(32);
     auto start = alloc.alloc(16);
     alloc.alloc(16);
-    alloc.free();
+    alloc.clear();
 
     assert(alloc.alloc(8) == start);
 }
