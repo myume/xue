@@ -4,15 +4,15 @@
 #include <stdexcept>
 
 StackAllocator::StackAllocator(size_t size)
-    : size(size), memory(malloc(size)) {}
+    : capacity(size), memory(malloc(size)) {}
 
 StackAllocator::~StackAllocator() { free(memory); };
 
 StackAllocator::StackAllocator(StackAllocator &&other) noexcept
-    : memory(other.memory), size(other.size), allocated(other.allocated),
-      blocks(std::move(other.blocks)) {
+    : memory(other.memory), capacity(other.capacity),
+      allocated(other.allocated), blocks(std::move(other.blocks)) {
     other.memory = nullptr;
-    other.size = 0;
+    other.capacity = 0;
     other.allocated = 0;
 };
 
@@ -23,11 +23,11 @@ StackAllocator &StackAllocator::operator=(StackAllocator &&other) {
 
     free(memory);
     memory = other.memory;
-    size = other.size;
+    capacity = other.capacity;
     allocated = other.allocated;
     blocks = std::move(other.blocks);
     other.memory = nullptr;
-    other.size = 0;
+    other.capacity = 0;
     other.allocated = 0;
     return *this;
 };
@@ -35,7 +35,7 @@ StackAllocator &StackAllocator::operator=(StackAllocator &&other) {
 void *StackAllocator::alloc(size_t bytes) {
     void *top = reinterpret_cast<char *>(memory) + allocated;
 
-    if (allocated + bytes > size) {
+    if (allocated + bytes > capacity) {
         throw std::runtime_error("out of memory");
     }
 

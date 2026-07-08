@@ -15,7 +15,7 @@ class StackAllocator {
 
     void *memory;
 
-    size_t size;
+    size_t capacity;
     size_t allocated = 0;
     std::vector<size_t> blocks;
 
