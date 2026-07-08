@@ -54,6 +54,15 @@ TEST_CASE("move constructor transfers ownership and blocks",
     REQUIRE_NOTHROW(b.pop_free(p));
 }
 
+TEST_CASE("move assignment transfers ownership and blocks",
+          "[StackAllocator]") {
+    StackAllocator a(64);
+    StackAllocator b(32);
+    void *p = a.alloc(32);
+    b = std::move(a);
+    REQUIRE_NOTHROW(b.pop_free(p));
+}
+
 TEST_CASE("pop on emty stack allocator throws", "[StackAllocator]") {
     auto alloc = StackAllocator(16);
     REQUIRE_THROWS(alloc.pop_free(nullptr));

@@ -9,7 +9,7 @@ class StackAllocator {
     explicit StackAllocator(size_t size);
     ~StackAllocator();
 
-    StackAllocator(StackAllocator &&);
+    StackAllocator(StackAllocator &&) noexcept;
     StackAllocator &operator=(StackAllocator &&);
 
     // Disallow copy, doesn't make sense here
