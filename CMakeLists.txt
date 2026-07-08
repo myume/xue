@@ -6,6 +6,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(xue_alloc STATIC
     src/StackAllocator.cpp
     src/StackAllocator.h
+    src/ArenaAllocator.cpp
+    src/ArenaAllocator.h
 )
 
 Include(FetchContent)

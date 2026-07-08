@@ -1,5 +1,8 @@
+#include "../src/ArenaAllocator.h"
 #include "../src/StackAllocator.h"
+#include <cassert>
 #include <catch2/catch_test_macros.hpp>
+#include <cstdint>
 
 TEST_CASE("allocates correct capacity", "[StackAllocator]") {
     auto alloc = StackAllocator(16);
@@ -111,4 +114,32 @@ TEST_CASE("throws error when marker is invalid", "[StackAllocator]") {
         // freeing would truncate the second 32 byte block
         REQUIRE_THROWS(alloc.freeToMarker(mark));
     }
+}
+
+TEST_CASE("allocates correct capacity", "[ArenaAllocator]") {
+    auto alloc = ArenaAllocator(32);
+    REQUIRE_NOTHROW(alloc.alloc(16));
+    REQUIRE_NOTHROW(alloc.alloc(16));
+    REQUIRE_THROWS(alloc.alloc(16));
+}
+
+TEST_CASE("frees all memory", "[ArenaAllocator]") {
+    auto alloc = ArenaAllocator(32);
+    auto start = alloc.alloc(16);
+    alloc.alloc(16);
+    alloc.free();
+
+    assert(alloc.alloc(8) == start);
+}
+
+TEST_CASE("correctly handles allocations", "[ArenaAllocator]") {
+    auto alloc = ArenaAllocator(32);
+    auto a = reinterpret_cast<int32_t *>(alloc.alloc(4));
+    auto b = reinterpret_cast<int32_t *>(alloc.alloc(4));
+
+    *a = 10;
+    *b = 12;
+
+    REQUIRE(*a == 10);
+    REQUIRE(*b == 12);
 }
