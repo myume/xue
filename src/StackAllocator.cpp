@@ -68,7 +68,7 @@ void StackAllocator::clear() {
 };
 
 StackAllocator::Marker StackAllocator::marker() noexcept {
-    return Marker{.offset = allocated};
+    return Marker(allocated);
 };
 
 void StackAllocator::freeToMarker(Marker mark) {

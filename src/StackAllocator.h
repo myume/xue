@@ -6,7 +6,10 @@
 /// An allocator that allocates blocks of memory in FIFO order
 class StackAllocator {
   private:
-    struct Marker {
+    class Marker {
+      private:
+        friend StackAllocator;
+        Marker(size_t offset) : offset(offset) {};
         size_t offset;
     };
 
