@@ -5,6 +5,17 @@
 
 /// An allocator that allocates blocks of memory in FIFO order
 class StackAllocator {
+  private:
+    struct Marker {
+        size_t offset;
+    };
+
+    void *memory;
+
+    size_t size;
+    size_t allocated = 0;
+    std::vector<size_t> blocks;
+
   public:
     explicit StackAllocator(size_t size);
     ~StackAllocator();
@@ -20,16 +31,14 @@ class StackAllocator {
     void *alloc(size_t size);
 
     /// Free the pointer allocated with alloc
-    void pop_free(void *ptr);
+    void pop(void *ptr);
 
     /// Clear all allocated memory, using previously allocated pointers after
     /// this is undefined behavior
     void clear();
 
-  private:
-    void *memory;
+    /// Get marker to top of stack
+    Marker marker() noexcept;
 
-    size_t size;
-    size_t allocated = 0;
-    std::vector<size_t> blocks;
+    void freeToMarker(Marker mark);
 };

@@ -45,7 +45,7 @@ void *StackAllocator::alloc(size_t bytes) {
     return top;
 }
 
-void StackAllocator::pop_free(void *ptr) {
+void StackAllocator::pop(void *ptr) {
     if (blocks.empty()) {
         throw std::runtime_error("pop on empty stack");
     }
@@ -65,4 +65,25 @@ void StackAllocator::pop_free(void *ptr) {
 void StackAllocator::clear() {
     blocks.clear();
     allocated = 0;
+};
+
+StackAllocator::Marker StackAllocator::marker() noexcept {
+    return Marker{.offset = allocated};
+};
+
+void StackAllocator::freeToMarker(Marker mark) {
+    size_t blocksPopped = 0;
+    int delta = allocated - mark.offset;
+    for (auto i = blocks.rbegin();
+         i + blocksPopped < blocks.rend() && delta > 0; blocksPopped++) {
+        delta -= *(i + blocksPopped);
+    }
+
+    if (delta != 0)
+        throw std::runtime_error("invalid marker");
+
+    allocated = mark.offset;
+
+    for (; blocksPopped > 0; blocksPopped--)
+        blocks.pop_back();
 };
