@@ -36,3 +36,29 @@ void PoolAllocator::freeBlock(void *block) {
     head = reinterpret_cast<void **>(*head);
     return freeBlock;
 };
+
+PoolAllocator::PoolAllocator(PoolAllocator &&other) noexcept
+    : memory(other.memory), blockSize(other.blockSize),
+      capacity(other.capacity), head(other.head) {
+    other.memory = nullptr;
+    other.head = nullptr;
+    other.blockSize = 0;
+    other.capacity = 0;
+};
+
+PoolAllocator &PoolAllocator::operator=(PoolAllocator &&other) noexcept {
+    if (this == &other) {
+        return *this;
+    }
+
+    free(memory);
+    memory = other.memory;
+    head = other.head;
+    capacity = other.capacity;
+    blockSize = other.blockSize;
+    other.memory = nullptr;
+    other.head = nullptr;
+    other.blockSize = 0;
+    other.capacity = 0;
+    return *this;
+};
