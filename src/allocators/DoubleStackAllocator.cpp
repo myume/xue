@@ -81,13 +81,13 @@ void DoubleStackAllocator::freeToMarker(Marker mark) {
 };
 
 void DoubleStackAllocator::freeToLowMarker(Marker mark) {
-    if (mark.value > low)
+    if (mark.value < low)
         throw std::runtime_error("invalid marker");
     low = mark.value;
 };
 
 void DoubleStackAllocator::freeToHighMarker(Marker mark) {
-    if (mark.value < high)
+    if (mark.value > high)
         throw std::runtime_error("invalid marker");
     high = mark.value;
 };
