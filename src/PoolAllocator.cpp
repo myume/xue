@@ -14,10 +14,7 @@ PoolAllocator::PoolAllocator(size_t blockSize, size_t capacity)
     }
 };
 
-PoolAllocator::~PoolAllocator() {
-    if (memory)
-        free(memory);
-};
+PoolAllocator::~PoolAllocator() { free(memory); };
 
 void PoolAllocator::freeBlock(void *block) {
     auto offset =

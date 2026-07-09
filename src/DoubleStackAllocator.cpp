@@ -5,10 +5,7 @@
 DoubleStackAllocator::DoubleStackAllocator(size_t capacity)
     : memory(malloc(capacity)), high(capacity), capacity(capacity) {}
 
-DoubleStackAllocator::~DoubleStackAllocator() {
-    if (memory != nullptr)
-        free(memory);
-};
+DoubleStackAllocator::~DoubleStackAllocator() { free(memory); };
 
 DoubleStackAllocator::DoubleStackAllocator(
     DoubleStackAllocator &&other) noexcept

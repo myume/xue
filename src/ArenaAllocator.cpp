@@ -4,10 +4,7 @@
 ArenaAllocator::ArenaAllocator(size_t capacity)
     : capacity(capacity), memory(malloc(capacity)) {}
 
-ArenaAllocator::~ArenaAllocator() {
-    if (memory != nullptr)
-        free(memory);
-};
+ArenaAllocator::~ArenaAllocator() { free(memory); };
 
 ArenaAllocator::ArenaAllocator(ArenaAllocator &&other)
     : capacity(other.capacity), memory(other.memory),

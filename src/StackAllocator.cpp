@@ -6,10 +6,7 @@
 StackAllocator::StackAllocator(size_t size)
     : capacity(size), memory(malloc(size)) {}
 
-StackAllocator::~StackAllocator() {
-    if (memory != nullptr)
-        free(memory);
-};
+StackAllocator::~StackAllocator() { free(memory); };
 
 StackAllocator::StackAllocator(StackAllocator &&other) noexcept
     : memory(other.memory), capacity(other.capacity),
