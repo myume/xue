@@ -1,33 +1,41 @@
 #include "PoolAllocator.h"
 #include <stdexcept>
 
-FreeLinkedList::FreeLinkedList(size_t blocksize, size_t capacity)
-    : FreeList{blocksize, capacity}, head(nullptr) {
+PoolAllocator::PoolAllocator(size_t blockSize, size_t capacity)
+    : blockSize(blockSize), capacity(capacity), head(nullptr) {
+    if (blockSize < sizeof(void *)) {
+        throw std::runtime_error("minimum block size is size of pointer");
+    }
+
+    memory = malloc(blockSize * capacity);
     for (auto i = 0; i < capacity; i++) {
-        freeBlock(reinterpret_cast<char *>(memory) + blocksize * i);
+        auto addr = reinterpret_cast<char *>(memory) + i * blockSize;
+        freeBlock(addr);
     }
-}
+};
 
-void *FreeLinkedList::nextBlock() {
-    if (!head) {
-        throw std::runtime_error("out of memory");
-    }
+PoolAllocator::~PoolAllocator() {
+    if (memory)
+        free(memory);
+};
 
-    void *block = head->block;
-    head = std::move(head->next);
-    return block;
-}
-
-void FreeLinkedList::freeBlock(void *block) {
+void PoolAllocator::freeBlock(void *block) {
     auto offset =
         reinterpret_cast<char *>(block) - reinterpret_cast<char *>(memory);
-    if (offset < 0 || offset >= blocksize * capacity ||
-        offset % blocksize != 0) {
+    if (offset < 0 || offset >= blockSize * capacity ||
+        offset % blockSize != 0) {
         throw std::runtime_error("invalid block");
     }
 
-    head = std::make_unique<Node>(block, std::move(head));
-}
+    auto addr = reinterpret_cast<void **>(block);
+    *addr = head;
+    head = addr;
+};
 
-void *PoolAllocator::nextBlock() { return impl->nextBlock(); };
-void PoolAllocator::freeBlock(void *block) { impl->freeBlock(block); };
+[[nodiscard]] void *PoolAllocator::nextBlock() {
+    if (!head)
+        throw std::runtime_error("out of memory");
+    auto freeBlock = head;
+    head = reinterpret_cast<void **>(*head);
+    return freeBlock;
+};
