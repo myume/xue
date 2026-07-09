@@ -1,6 +1,6 @@
-#include "../src/ArenaAllocator.h"
-#include "../src/PoolAllocator.h"
-#include "../src/StackAllocator.h"
+#include "../src/allocators/ArenaAllocator.h"
+#include "../src/allocators/PoolAllocator.h"
+#include "../src/allocators/StackAllocator.h"
 #include <cassert>
 #include <catch2/catch_test_macros.hpp>
 #include <cstdint>
