@@ -10,6 +10,8 @@ add_library(xue_alloc STATIC
     src/StackAllocator.h
     src/DoubleStackAllocator.cpp
     src/DoubleStackAllocator.h
+    src/PoolAllocator.h
+    src/PoolAllocator.cpp
 )
 
 Include(FetchContent)

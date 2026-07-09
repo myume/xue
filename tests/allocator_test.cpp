@@ -1,4 +1,5 @@
 #include "../src/ArenaAllocator.h"
+#include "../src/PoolAllocator.h"
 #include "../src/StackAllocator.h"
 #include <cassert>
 #include <catch2/catch_test_macros.hpp>
@@ -142,4 +143,36 @@ TEST_CASE("correctly handles allocations", "[ArenaAllocator]") {
 
     REQUIRE(*a == 10);
     REQUIRE(*b == 12);
+}
+
+TEST_CASE("allocate new blocks correctly", "[PoolAllocator]") {
+    auto alloc = PoolAllocator(8, 16);
+    auto a = alloc.nextBlock();
+    auto b = alloc.nextBlock();
+    REQUIRE(a != b);
+}
+
+TEST_CASE("frees blocks correctly", "[PoolAllocator]") {
+    auto alloc = PoolAllocator(8, 16);
+    auto a = alloc.nextBlock();
+    auto b = alloc.nextBlock();
+    alloc.freeBlock(a);
+    alloc.freeBlock(b);
+    auto c = alloc.nextBlock();
+    auto d = alloc.nextBlock();
+    REQUIRE(a == d);
+    REQUIRE(b == c);
+}
+
+TEST_CASE("errors when freeing invalid block", "[PoolAllocator]") {
+    auto alloc = PoolAllocator(8, 2);
+    int x = 0;
+    REQUIRE_THROWS(alloc.freeBlock(&x));
+}
+
+TEST_CASE("errors on OOM", "[PoolAllocator]") {
+    auto alloc = PoolAllocator(8, 2);
+    auto a = alloc.nextBlock();
+    auto b = alloc.nextBlock();
+    REQUIRE_THROWS(alloc.nextBlock());
 }
