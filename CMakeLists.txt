@@ -3,7 +3,7 @@ project(xue)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(xue_alloc STATIC
+add_library(xue STATIC
     src/allocators/ArenaAllocator.cpp
     src/allocators/ArenaAllocator.h
     src/allocators/StackAllocator.cpp
@@ -12,6 +12,8 @@ add_library(xue_alloc STATIC
     src/allocators/DoubleStackAllocator.h
     src/allocators/PoolAllocator.h
     src/allocators/PoolAllocator.cpp
+
+    src/RingBuffer.h
 )
 
 Include(FetchContent)
@@ -24,8 +26,11 @@ FetchContent_MakeAvailable(Catch2)
 
 enable_testing()
 
-add_executable(tests tests/allocator_test.cpp)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain xue_alloc)
+add_executable(tests 
+    tests/allocator_test.cpp
+    tests/ring_buffer_test.cpp
+)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain xue)
 
 include(CTest)
 include(Catch)
